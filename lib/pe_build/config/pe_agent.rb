@@ -9,7 +9,7 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
 
   # @!attribute [rw] autosign
   #   If true, and {#master_vm} is set, the agent's certificate will be signed
-  #   on the master VM.
+  #   on the master VM. DNS alternative names will be approved, if present.
   #
   #   @return [true, false] Defaults to `true` if {#master_vm} is set,
   #     otherwise `false`.

@@ -98,6 +98,7 @@ with the global `config.pe_build` settings.
   * `autosign`
     * Description: An boolean switch which controls whether or not to sign the
       agent's certificate after installation. Requires `master_vm` to be set.
+      DNS alternative names will be approved, if present.
     * Options: `true`, `false`
     * Default: `true`, if `master_vm` is set.
   * `autopurge`

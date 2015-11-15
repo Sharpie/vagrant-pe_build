@@ -45,11 +45,12 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       status('Test: pe_agent install')
       result = assert_execute('vagrant', 'up', "--provider=#{provider}", 'pe-20152-agent')
 
-      status('Test: pe_agent signed cert during install')
+      status('Test: pe_agent signed cert with alt names during install')
       result = execute('vagrant', 'ssh',
         'pe-20152-master',
         '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-20152-agent.pe-bootstrap.vlan')
       expect(result).to exit_with(0)
+      expect(result.stdout).to match('DNS:test-agent')
 
       status('Test: pe_agent cert purged when vm destroyed')
       result = assert_execute('vagrant', 'destroy', '-f', 'pe-20152-agent')
@@ -75,11 +76,12 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       status('Test: pe_agent install')
       result = assert_execute('vagrant', 'up', "--provider=#{provider}", 'pe-2015latest-agent')
 
-      status('Test: pe_agent signed cert during install')
+      status('Test: pe_agent signed cert with alt names during install')
       result = execute('vagrant', 'ssh',
         'pe-2015latest-master',
         '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-2015latest-agent.pe-bootstrap.vlan')
       expect(result).to exit_with(0)
+      expect(result.stdout).to match('DNS:test-agent')
 
       status('Test: pe_agent cert purged when vm destroyed')
       result = assert_execute('vagrant', 'destroy', '-f', 'pe-2015latest-agent')

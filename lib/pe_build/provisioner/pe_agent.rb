@@ -217,7 +217,7 @@ bash pe_frictionless_installer.sh #{format_posix_install_options.join(' ')}
         shell_config.privileged = true
         # TODO: Extend paths to PE 3.x masters.
         shell_config.inline = <<-EOS
-/opt/puppetlabs/bin/puppet cert sign #{agent_certname}
+/opt/puppetlabs/bin/puppet cert sign --allow-dns-alt-names #{agent_certname}
         EOS
         shell_config.finalize!
 

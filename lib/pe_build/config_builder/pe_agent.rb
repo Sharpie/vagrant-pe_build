@@ -4,7 +4,7 @@ require 'config_builder/model'
 class PEBuild::ConfigBuilder::PEAgent < ::ConfigBuilder::Model::Base
   # @!attribute [rw] autosign
   #   If true, and {#master_vm} is set, the agent's certificate will be signed
-  #   on the master VM.
+  #   on the master VM. DNS alternative names will be approved, if present.
   #
   #   @return [true, false] Defaults to `true` if {#master_vm} is set,
   #     otherwise `false`.
