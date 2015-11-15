@@ -69,6 +69,15 @@ module PEBuild
         facts['os']['family'].downcase == 'windows'
       end
 
+      # Turns the config.install_options hash into an Array of strings
+      #
+      # @return [Array[String]]
+      def format_posix_install_options
+        config.install_options.map do |section, settings|
+          settings.map {|key, value| "#{section}:#{key}=#{value}" }
+        end
+      end
+
       def provision_agent
         unless agent_version.nil?
           machine.ui.info I18n.t(
@@ -144,13 +153,12 @@ module PEBuild
         # failures are detected. The curl command uses `sS` so that download
         # progress is silenced, but error messages are still printed.
         #
-        # TODO: Extend to allow passing agent install options.
         # TODO: Extend to use `config.version` once {#provision_pe_repo}
         # supports it.
         shell_config.inline = <<-EOS
 set -e
 curl -ksS -tlsv1 https://#{config.master}:8140/packages/current/install.bash -o pe_frictionless_installer.sh
-bash pe_frictionless_installer.sh
+bash pe_frictionless_installer.sh #{format_posix_install_options.join(' ')}
         EOS
         shell_config.finalize!
 
