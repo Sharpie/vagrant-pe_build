@@ -23,6 +23,16 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
   #     otherwise `false`.
   attr_accessor :autopurge
 
+  # @!attribute [rw] install_options
+  #   A hash that maps settings to values that will be passed to the installer.
+  #
+  #   @return [Hash{String => Hash{String => String}}] A hash that maps
+  #     puppet.conf section to hashes of settings and values. These will
+  #     be passed to the install script as options of the form:
+  #
+  #         <section>:<setting>=<value>
+  attr_accessor :install_options
+
   # @!attribute master
   #   @return [String] The DNS hostname of the Puppet master for this node.
   #     If {#master_vm} is set, the hostname of that machine will be used
@@ -43,6 +53,7 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
   def initialize
     @autosign      = UNSET_VALUE
     @autopurge     = UNSET_VALUE
+    @install_options = {}
     @master        = UNSET_VALUE
     @master_vm     = UNSET_VALUE
     @version       = UNSET_VALUE
@@ -65,6 +76,8 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
 
     validate_master_vm!(errors, machine)
     validate_version!(errors, machine)
+    # TODO: Install options can't be set on a Linux machine using PE < 3.7
+    validate_install_options!(errors, machine)
 
     {'pe_agent provisioner' => errors}
   end
@@ -119,5 +132,25 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
       :version       => @version,
       :version_class => @version.class
     )
+  end
+
+  def validate_install_options!(errors, machine)
+    unless @install_options.is_a?(Hash)
+      errors << I18n.t(
+        'pebuild.config.pe_agent.errors.install_options_must_be_hash',
+        :options_class => @install_options.class
+      )
+      return
+    end
+
+    @install_options.each do |section, settings|
+      unless settings.is_a?(Hash)
+        errors << I18n.t(
+          'pebuild.config.pe_agent.errors.install_options_settings_must_be_hash',
+          :section        => section,
+          :settings_class => settings.class
+        )
+      end
+    end
   end
 end

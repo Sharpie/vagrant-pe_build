@@ -16,6 +16,15 @@ class PEBuild::ConfigBuilder::PEAgent < ::ConfigBuilder::Model::Base
   #   @return [true, false] Defaults to `true` if {#master_vm} is set,
   #     otherwise `false`.
   def_model_attribute :autopurge
+  # @!attribute [rw] install_options
+  #   A hash that maps settings to values that will be passed to the installer.
+  #
+  #   @return [Hash{String => Hash{String => String}}] A hash that maps
+  #     puppet.conf section to hashes of settings and values. These will
+  #     be passed to the install script as options of the form:
+  #
+  #         <section>:<setting>=<value>
+  def_model_attribute :install_options
   # @!attribute master
   #   @return [String] The DNS hostname of the Puppet master for this node.
   #     If {#master_vm} is set, the hostname of that machine will be used
@@ -36,6 +45,7 @@ class PEBuild::ConfigBuilder::PEAgent < ::ConfigBuilder::Model::Base
       vm_config.provision :pe_agent do |config|
         with_attr(:autosign)     {|val| config.autosign     = val }
         with_attr(:autopurge)    {|val| config.autopurge    = val }
+        with_attr(:install_options) {|val| config.install_options = val }
         with_attr(:master)       {|val| config.master       = val }
         with_attr(:master_vm)    {|val| config.master_vm    = val }
         with_attr(:version)      {|val| config.version      = val }

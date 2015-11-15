@@ -113,6 +113,10 @@ en:
           version_too_old: |-
             The agent version %{version} is too old; pe_agent can only provision versions
             newer than %{minimum_version}.
+          install_options_must_be_hash: |-
+            A value of class %{options_class} was set for install_options. A Hash must be used.
+          install_options_settings_must_be_hash: |-
+            install_options must be set to a Hash of Hashes. The %{section} was set to %{settings_class} instead of Hash.
     cap:
       run_install:
         already_installed: |-

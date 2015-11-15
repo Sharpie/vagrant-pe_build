@@ -72,6 +72,31 @@ describe PEBuild::Config::PEAgent do
     end
   end
 
+  describe 'install_options' do
+    it 'must be a hash' do
+      subject.install_options = []
+      subject.finalize!
+
+      errors = subject.validate(machine)
+
+      expect(errors['pe_agent provisioner'].join).to match(/A Hash must be used/)
+    end
+
+    it 'must be a hash of hashes' do
+      subject.install_options = {
+        :main => {
+          :server => 'puppet.company.com',
+        },
+        :agent => ['dns_alt_names=agent.company.com,agent'],
+      }
+      subject.finalize!
+
+      errors = subject.validate(machine)
+
+      expect(errors['pe_agent provisioner'].join).to match(/install_options must be set to a Hash of Hashes/)
+    end
+  end
+
   describe 'master' do
     it 'must be set if master_vm is nil' do
       subject.master    = nil
