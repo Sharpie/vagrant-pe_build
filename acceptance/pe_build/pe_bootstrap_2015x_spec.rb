@@ -48,7 +48,7 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       status('Test: pe_agent signed cert with alt names during install')
       result = execute('vagrant', 'ssh',
         'pe-20152-master',
-        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-20152-agent.pe-bootstrap.vlan')
+        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-20152-agent')
       expect(result).to exit_with(0)
       expect(result.stdout).to match('DNS:test-agent')
 
@@ -56,7 +56,7 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       result = assert_execute('vagrant', 'destroy', '-f', 'pe-20152-agent')
       result = execute('vagrant', 'ssh',
         'pe-20152-master',
-        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-20152-agent.pe-bootstrap.vlan')
+        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-20152-agent')
       expect(result.stderr).to match(/Could not find a certificate/)
     end
   end
@@ -79,7 +79,7 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       status('Test: pe_agent signed cert with alt names during install')
       result = execute('vagrant', 'ssh',
         'pe-2015latest-master',
-        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-2015latest-agent.pe-bootstrap.vlan')
+        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-2015latest-agent')
       expect(result).to exit_with(0)
       expect(result.stdout).to match('DNS:test-agent')
 
@@ -87,7 +87,7 @@ shared_examples 'provider/provisioner/pe_bootstrap/2015x' do |provider, options|
       result = assert_execute('vagrant', 'destroy', '-f', 'pe-2015latest-agent')
       result = execute('vagrant', 'ssh',
         'pe-2015latest-master',
-        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-2015latest-agent.pe-bootstrap.vlan')
+        '-c', 'sudo /opt/puppetlabs/bin/puppet cert list pe-2015latest-agent')
       expect(result.stderr).to match(/Could not find a certificate/)
     end
   end

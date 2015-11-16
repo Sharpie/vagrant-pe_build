@@ -67,6 +67,30 @@ class PEBuild::Config::PEAgent < Vagrant.plugin('2', :config)
     @version       = 'current' if @version == UNSET_VALUE
   end
 
+  # Lookup a install_option setting by section
+  #
+  # @param setting [String, Symbol] The name of the setting.
+  # @param section [String, Symbol] The section to search before `:main`.
+  #
+  # @return [Object] The value of the setting if found in the given section.
+  # @return [nil] A `nil` value, if the setting was not found.
+  def setting(section, setting)
+    setting = setting.to_sym
+    section = section.to_sym
+
+    # Sanitize the hash such that all keys are Symbols. This simplifies
+    # searching for particular keys.
+    symbolize_keys = lambda do |hash|
+      hash.inject({}) do |symbolized, (k,v)|
+        symbolized[k.intern] = (v.is_a?(Hash) ? symbolize_keys.call(v) : v)
+        symbolized
+      end
+    end
+    options = symbolize_keys.call(@install_options)
+
+    options.fetch(section, {}).fetch(setting, nil)
+  end
+
   def validate(machine)
     errors = _detected_errors
 

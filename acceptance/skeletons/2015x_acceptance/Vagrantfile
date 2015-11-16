@@ -37,6 +37,7 @@ Vagrant.configure('2') do |config|
       p.master_vm = 'pe-20152-master'
       p.install_options = {
         :agent => {
+          'certname' => :vm_name,
           'dns_alt_names' => 'test-agent'
         }
       }
@@ -72,6 +73,7 @@ Vagrant.configure('2') do |config|
       p.master_vm = 'pe-2015latest-master'
       p.install_options = {
         :agent => {
+          'certname' => :vm_name,
           'dns_alt_names' => 'test-agent'
         }
       }

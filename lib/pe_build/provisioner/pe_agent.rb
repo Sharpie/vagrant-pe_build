@@ -69,12 +69,35 @@ module PEBuild
         facts['os']['family'].downcase == 'windows'
       end
 
+      # The pe_agent install_options support two special certname values:
+      #
+      #   - :vm_name Use the machine name as the certname.
+      #   - :hostname Use the hostname as the certname with a fallback to
+      #     the machine name.
+      #
+      # @return [String, nil] The resolved certname or a `nil`.
+      def resolve_certname(name)
+        return nil if name.nil?
+
+        case (name.is_a?(Symbol) ? name.inspect : name)
+        when ':vm_name' then
+          machine.name.to_s
+        when ':hostname' then
+          (machine.config.vm.hostname || machine.name).to_s
+        else
+          name
+        end
+      end
+
       # Turns the config.install_options hash into an Array of strings
       #
       # @return [Array[String]]
       def format_posix_install_options
         config.install_options.map do |section, settings|
-          settings.map {|key, value| "#{section}:#{key}=#{value}" }
+          settings.map do |key, value|
+            value = resolve_certname(value) if key.to_s == 'certname'
+            "#{section}:#{key}=#{value}"
+          end
         end
       end
 
@@ -228,7 +251,7 @@ bash pe_frictionless_installer.sh #{format_posix_install_options.join(' ')}
       def cleanup_agent_cert
         # TODO: This isn't very flexible. But, the VM is destroyed at this
         # point, so it's the best guess we have available.
-        agent_certname = (machine.config.vm.hostname || machine.name).to_s
+        agent_certname = (resolve_certname(config.setting(:agent, :certname)) || machine.config.vm.hostname || machine.name).to_s
 
         unless is_reachable?(master_vm)
           master_vm.ui.warn I18n.t(
